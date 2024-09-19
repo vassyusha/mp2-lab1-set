@@ -97,36 +97,30 @@ int TBitField::operator!=(const TBitField &bf) const // сравнение
 
 TBitField TBitField::operator|(const TBitField &bf) // операция "или"
 {
-    int m = this->MemLen, n = this->BitLen;
-    if (m < bf.MemLen) m = bf.MemLen;
+    int m = this->BitLen, n = this->BitLen;
+    if (m > bf.BitLen) m = bf.BitLen;
     if (n < bf.BitLen) n = bf.BitLen;
 
     TBitField tbf(n);
 
-    for (int i = 0; i < m; i++) {
-        if (i >= this->MemLen) tbf.pMem[i] = bf.pMem[i];
-        else if (i >= bf.MemLen) tbf.pMem[i] = this->pMem[i];
-        else tbf.pMem[i] = this->pMem[i] | bf.pMem[i];
+    for (int i = 0; i < n; i++) {
+        if (i >= this->BitLen) { if (bf.GetBit(i) == 1) tbf.SetBit(i); }
+        else if (i >= bf.BitLen) { if (this->GetBit(i) == 1) tbf.SetBit(i); }
+        else if ((this->GetBit(i) | bf.GetBit(i)) == 1) tbf.SetBit(i);
     }
     return tbf;
 }
 
 TBitField TBitField::operator&(const TBitField &bf) // операция "и"
 {
-    /*for (int i = 0; i < m; i++) {
-        tbf.pMem[i] = this->pMem[i] & bf.pMem[i];
-    }*/
-    int m = this->MemLen, n = this->BitLen;
-    if (m < bf.MemLen) m = bf.MemLen;
+    int m = this->BitLen, n = this->BitLen;
+    if (m > bf.BitLen) m = bf.BitLen;
     if (n < bf.BitLen) n = bf.BitLen;
 
     TBitField tbf(n);
 
-    
-    for (int i = 0; i < n; i++) {
-        if (i >= this->BitLen) { if (bf.GetBit(bf.BitLen - i - 1) == 1) tbf.SetBit(n - i - 1); }
-        else if (i >= bf.BitLen) { if (this->GetBit(this->BitLen - i - 1) == 1) tbf.SetBit(n - i - 1); }
-        else if ((this->GetBit(this->BitLen - i - 1) & bf.GetBit(bf.BitLen - i - 1)) == 1) tbf.SetBit(n - i - 1);
+    for (int i = 0; i < m; i++) {
+        if ((this->GetBit(i) & bf.GetBit(i)) == 1) tbf.SetBit(i);
     }
     return tbf;
 }
